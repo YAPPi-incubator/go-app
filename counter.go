@@ -43,14 +43,18 @@ type serviceHandler struct {
 }
 
 func (h serviceHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	var value int64
+
 	switch req.URL.Path {
 	case "/inc":
-		fmt.Fprintf(w, "%d\n", countValue.inc())
+		value = countValue.inc()
 	case "/reset":
-		fmt.Fprintf(w, "%d\n", countValue.reset())
+		value = countValue.reset()
 	default:
-		fmt.Fprintf(w, "%d\n", countValue.get())
+		value = countValue.get()
 	}
+
+	fmt.Fprintf(w, "%d\n", value)
 }
 
 func main() {
