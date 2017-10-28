@@ -5,20 +5,38 @@ import (
 	"net/http"
 )
 
-var number = 0
+var number = countValue{0}
+
+type countValue struct {
+	value int64
+}
+
+func (c countValue) get() int64 {
+	return c.value
+}
+
+func (c *countValue) inc() int64 {
+	c.value++
+
+	return c.value
+}
+
+func (c *countValue) reset() int64 {
+	c.value = 0
+
+	return c.value
+}
 
 func get(response http.ResponseWriter, request *http.Request) {
-	fmt.Fprintf(response, "%d\n", number)
+	fmt.Fprintf(response, "%d\n", number.get())
 }
 
 func inc(response http.ResponseWriter, request *http.Request) {
-	number = number + 1
-	fmt.Fprintf(response, "%d\n", number)
+	fmt.Fprintf(response, "%d\n", number.inc())
 }
 
 func reset(response http.ResponseWriter, request *http.Request) {
-	number = 0
-	fmt.Fprintf(response, "%d\n", number)
+	fmt.Fprintf(response, "%d\n", number.reset())
 }
 
 func main() {
