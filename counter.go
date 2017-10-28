@@ -1,11 +1,17 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
+
+	"github.com/prometheus/common/log"
 )
 
-var number = countValue{0}
+var (
+	number        = countValue{0}
+	listenAddress = flag.String("listen-address", ":8080", "Address on which to expose service.")
+)
 
 type countValue struct {
 	value int64
@@ -40,9 +46,13 @@ func reset(response http.ResponseWriter, request *http.Request) {
 }
 
 func main() {
+	flag.Parse()
+
+	log.Infof("binding to %s", *listenAddress)
 	http.HandleFunc("/", get)
 	http.HandleFunc("/get", get)
 	http.HandleFunc("/inc", inc)
 	http.HandleFunc("/reset", reset)
-	http.ListenAndServe(":8080", nil)
+
+	log.Fatal(http.ListenAndServe(*listenAddress, nil))
 }
