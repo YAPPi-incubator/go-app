@@ -40,8 +40,8 @@ func reset(response http.ResponseWriter, request *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/",      get)
-	http.HandleFunc("/get",   get)
+	http.HandleFunc("/", get)
+	http.HandleFunc("/get", get)
 	http.HandleFunc("/inc", inc)
 	http.HandleFunc("/reset", reset)
 	http.ListenAndServe(":8080", nil)
