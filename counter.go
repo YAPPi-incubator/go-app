@@ -9,9 +9,15 @@ import (
 )
 
 var (
-	countValue    = inMemoryCount{0}
-	listenAddress = flag.String("listen-address", ":8080", "Address on which to expose service.")
+	countValue    countDriver = &inMemoryCount{0}
+	listenAddress             = flag.String("listen-address", ":8080", "Address on which to expose service.")
 )
+
+type countDriver interface {
+	get() int64
+	inc() int64
+	reset() int64
+}
 
 type inMemoryCount struct {
 	value int64
