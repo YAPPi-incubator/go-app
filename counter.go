@@ -33,26 +33,23 @@ func (c *countValue) reset() int64 {
 	return c.value
 }
 
-func get(response http.ResponseWriter, request *http.Request) {
-	fmt.Fprintf(response, "%d\n", number.get())
+type serviceHandler struct {
 }
 
-func inc(response http.ResponseWriter, request *http.Request) {
-	fmt.Fprintf(response, "%d\n", number.inc())
-}
-
-func reset(response http.ResponseWriter, request *http.Request) {
-	fmt.Fprintf(response, "%d\n", number.reset())
+func (h serviceHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	switch req.URL.Path {
+	case "/inc":
+		fmt.Fprintf(w, "%d\n", number.inc())
+	case "/reset":
+		fmt.Fprintf(w, "%d\n", number.reset())
+	default:
+		fmt.Fprintf(w, "%d\n", number.get())
+	}
 }
 
 func main() {
 	flag.Parse()
 
 	log.Infof("binding to %s", *listenAddress)
-	http.HandleFunc("/", get)
-	http.HandleFunc("/get", get)
-	http.HandleFunc("/inc", inc)
-	http.HandleFunc("/reset", reset)
-
-	log.Fatal(http.ListenAndServe(*listenAddress, nil))
+	log.Fatal(http.ListenAndServe(*listenAddress, serviceHandler{}))
 }
